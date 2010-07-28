@@ -24,7 +24,6 @@ Text::LookUpTable - text based look up table operations
 
   print $tbl;
   $str_tbl = "$tbl";
-  $str_tbl = $tbl->as_string();
 
   $tbl->save_file();
   $tbl->save_file('my_table.tbl');
@@ -40,6 +39,8 @@ Text::LookUpTable - text based look up table operations
   @ys = $tbl->get_y_vals($x_offset);
   @xs = $tbl->get_x_vals($y_offset);
 
+  $str_plot = $tbl->as_plot('R');
+  print FILE $str_plot;
 
 =head1 DESCRIPTION
 
@@ -70,28 +71,34 @@ any sort of function, it just stores data.
 The format of the look up table when stored to a string or file should
 look like the example below.
 
-                rpm
+                        rpm
  
-              [12]   [15]  [17]  [35]
-       [100]  3      15    4     2
-  map  [120]  10     12    3     4
-       [130]  15.2   12    13    20
-	
+              [1000]   [1500]  [2000]  [2500]
+       [100]  14.0     15.5    16.4    17.9
+  map  [90]   13.0     14.5    15.3    16.8
+       [80]   12.0     13.5    14.2    15.7
+
 The x (across top) and y (left column) coordinates have there values
-enclosed in square brackets.  All values must be present (no "").
-And the titles can only span one line.  There can be any number of blank
+enclosed in square brackets.  All values must be present.
+And the titles can only span one line.  There can be any number of
 lines and spaces as long as the values can be discerned.
-When saving the original number of blank lines and spaces will not be
+When saving and restoring a table the original spacing will not be
 preserved.
 
 The x values start at offset 0 at the left and increase towards the right.
-The y values start at offset 0 at the top and increase downward.
-
+The y values start at offset 0 at the bottom and increase upward.
 
 =head1 OPERATIONS
 
 
 =cut
+
+#
+# DEVNOTE:
+# The position offset calculations are quite tedious.
+# It is recommended to use only the high level functions already defined
+# to access these values and to not access the structure in the object directly.
+#
 
 # {{{ load
 
@@ -113,12 +120,12 @@ sub load {
 
 	#  An example of a displayed look up table.
 	#
-	#               rpm
-	#
-	#             [12]   [15]  [17]  [35]
-	#      [100]  3      15    4     2
-	# map  [120]  10     12    3     4
-	#      [130]  15.2   12    13    20
+    #                        rpm
+    # 
+    #              [1000]   [1500]  [2000]  [2500]
+    #       [100]  14.0     15.5    16.4    17.9
+    #  map  [90]   13.0     14.5    15.3    16.8
+    #       [80]   12.0     13.5    14.2    15.7
 	#
 	#
 	#
@@ -178,6 +185,7 @@ sub load {
 			next;
 		}
 
+		# x coordiantes line across top with values in square brackets
 		if (! defined $num_x_coords) {
 			$num_x_coords = $num_parts;
 
@@ -194,7 +202,7 @@ sub load {
 
 		# y title, 1 y coordinate, and data
 		# Take the title, remove it from @parts and let
-		# it be processed like a normal row.
+		# the data be processed in the next step
 		if (($num_x_coords + 2) == $num_parts) {
 
 			if (defined $y_title) {
@@ -205,7 +213,7 @@ sub load {
 			$y_title = $parts[0];
 			#print "y_title: $y_title\n";  # DEBUG
 
-			shift @parts;
+			shift @parts;  # remove the title
 			$num_parts--;
 		}
 
@@ -339,7 +347,8 @@ sub as_string {
 	# x coordinate and values column
 	my @val_cols;
 	for (my $i = 0; $i < $num_x; $i++) {
-		my @vals = ("[" . $self->{x}[$i] . "]", $self->get_y_vals($i));
+		                                              # XXX
+		my @vals = ("[" . $self->{x}[$i] . "]", (reverse $self->get_y_vals($i)));
 
 		my @col = align('left', @vals);
 
@@ -392,6 +401,7 @@ sub as_string {
 
 Optional argument $file, can specify the file to save to.
 If ommitted it will save to the last file that was used.
+If no last file is stored it will produce an error.
 
 =cut
 
@@ -427,6 +437,8 @@ sub save_file {
 
   Returns list of all x coordinates on success OR FALSE on error
 
+Offset 0 starts at the LEFT of the displayed table and increases rightward.
+
 =cut
 
 sub get_x_coords {
@@ -441,6 +453,8 @@ sub get_x_coords {
 =head2 $tbl->get_y_coords();
 
   Returns list of all y coordinates on success OR FALSE on error
+
+Offset 0 starts at the top of the display table and increases downward.
 
 =cut
 
@@ -458,7 +472,10 @@ sub get_y_coords {
   Returns list of values on success OR FALSE on error
 
 Retrive all y values for a given x offset.
-Note, this operation does not use the coordinates, it simply uses the offset.
+This operation uses the offset and does not calculate the position using coordinates.
+
+The 0 offset of the returned list will correspond to the 0 offset of the displayed
+table for y which would be at the bottom and increase upward.
 
 =cut
 
@@ -479,7 +496,9 @@ sub get_y_vals {
 	for (my $i = 0; $i < $num_y; $i++) {
 		my $xs = $vals->[$i];
 
-		push @res_vals, $xs->[$x];
+		unshift @res_vals, $xs->[$x];
+		# The bottom y value in the displayed table is at offset zero
+		# this is why unshift is used instead of push.
 	}
 
 	return @res_vals;
@@ -496,7 +515,8 @@ sub get_y_vals {
 Retrive all x values for a given y offset.
 Note, this operation does not use the coordinates, it simply uses the offset.
 
-The y offset starts at 0 at the top.
+The 0 offset of the returned list will correspond to the 0 offset of the displayed
+table for x which would be at the left and increase right ward.
 
 =cut
 
@@ -547,7 +567,8 @@ sub set {
 		return;
 	}
 
-	$self->{vals}[$y][$x] = $val;
+	$self->{vals}[($num_y - 1) - $y][$x] = $val;
+	# See get() for an explanation of the $y calculation
 
 	return 1; # success
 }
@@ -581,7 +602,17 @@ sub get {
 		return;
 	}
 
-	$self->{vals}[$y][$x];
+	#
+	# The y offset starts at 0 at the bottom, not the top so it must be adjusted.
+	# (length(@ys) - 1) - y
+	#
+	# 0 -> 4
+	# 1 -> 3
+	# 2 -> 2
+	# 3 -> 1
+	# 4 -> 0
+	#
+	$self->{vals}[($num_y - 1) - $y][$x];
 }
 # }}}
 
@@ -593,25 +624,32 @@ sub get {
 
   If $break is FALSE it returns a list of positions that are different.
 
-Test whether the two tables are different and return a list of coordinates
-unless $brake is TRUE.  Set $break = TRUE if you don't need the coordinates
-for a slight performance improvement.
+Test whether the values two tables are different.
+If $brake is FALSE return a complete list of coordinates that are different.
+If $brake is TRUE break out and return as soon it is found that they are
+different (slight performance improvement).
+
+This only tests the values for differences it does not test the coordinates
+or the titles,
 
 =cut
 
 sub diff {
-	my $tb1 = shift;
-	my $tb2 = shift;
+	my $tbl1 = shift;
+	my $tbl2 = shift;
 	my $break = shift;
 
-	my $num_rows = @{$tb1->{y}};
-	my $num_cols = @{$tb1->{x}};
+	my $num_x = ($tbl1->get_x_coords());
+	my $num_y = ($tbl1->get_y_coords());
 
 	my @diff_points;
-	for (my $i = 0; $i < $num_rows; $i++) {
-		for (my $j = 0; $j < $num_cols; $j++) {
-			if ($tb1->{vals}[$i][$j] != $tb2->{vals}[$i][$j]) {
-				push @diff_points, [$j, $i];
+	for (my $i = 0; $i < $num_x; $i++) {
+		my @ys1 = $tbl1->get_y_vals($i);
+		my @ys2 = $tbl2->get_y_vals($i);
+
+		for (my $j = 0; $j < $num_y; $j++) {
+			if ($ys1[$j] != $ys2[$j]) {
+				push @diff_points, [$i, $j];
 
 				return 1 if ($break);
 			}
@@ -628,15 +666,34 @@ sub diff {
 
 # {{{ as_plot
 
-=head2 $tbl->as_plot($plot_type);
+=head2 $tbl->as_plot('plot type', [type specific args ...] );
 
-  Returns string on success, FALSE on error.
+  Returns TRUE on success, FALSE on error.
 
-Convert the object to a string representation that can be plotted.
+Convert the table to a representation suitable for plotting.
 The string may need to be output to a file depending on how the
 plotting program is called.
 
-plot types: R, gnuplot
+See below for the various plot types.
+
+=head3 R  [www.r-project.org]
+
+  Returns: string on success, FALSE on error
+
+The string can be output to a file and then the file can
+be sourced to produce a plot.
+It depends upon the rgl library [http://cran.r-project.org/web/packages/rgl/index.html].
+
+ $tbl->as_plot('R');
+
+ user$ a.out > file.R
+ user$ R
+
+ > source('file.R')
+
+ (plot displayed)
+
+=head3 WANTED: more plot types: gnuplot, etc
 
 =cut
 
@@ -707,12 +764,21 @@ sub as_plot {
  File::Slurp           9999.13
   
  The version numbers given have been tested and shown to work
- but other versions may also work.
+ but other versions may work as well.
 
 =head1 REFERENCES
 
   [1]  MegaSquirt Engine Management System
        http://www.msextra.com/
+
+  [2]  R Project
+       http://www.r-project.org/
+
+  [3]  rgl: 3D visualization device system (OpenGL)
+       http://cran.r-project.org/web/packages/rgl/index.html
+
+  [4]  Gnuplot
+       http://www.gnuplot.info/
 
 =head1 AUTHOR
 

@@ -85,10 +85,11 @@ ok($xs[2] == 6);
 
 @ys = $lut->get_y_vals(1);
 ok(4 == @ys);
-ok($ys[0] == 2);
-ok($ys[1] == 5);
-ok($ys[2] == 8);
-ok($ys[3] == 11);
+# offset starts at 0 at the top
+ok($ys[0] == 11);
+ok($ys[1] == 8);
+ok($ys[2] == 5);
+ok($ys[3] == 2);
 
 }
 # }}}
@@ -109,6 +110,7 @@ ok("$tbl2" eq "$tbl3");
 # }}}
 
 # Try to load some faulty tables and make sure the error is caught.
+# Errors will be displayed but the tests here should still pass.
 
 # {{{ all values must be present, this one has one missing
 {
@@ -224,7 +226,7 @@ my $tblB = Text::LookUpTable->load($str_tblB);
 
 ok("$tblA" ne "$tblB");
 
-$tblA->set(2, 3, 666);
+$tblA->set(2, 0, 666);
 
 ok("$tblA" eq "$tblB");
 
@@ -265,12 +267,13 @@ my $tblB = Text::LookUpTable->load($str_tblB);
 # ther might be slight spacing differences which would
 # cause the equality test to fail.
 
+# they should be different
 ok($tblA->diff($tblB, 1));
 ok($tblA->diff($tblB));
 
 my @dp = $tblA->diff($tblB);
-ok($dp[0][0] == 2);
-ok($dp[0][1] == 3);
+ok($dp[0][0] == 2); # x
+ok($dp[0][1] == 0); # y
 
 #$tblA->set(2, 3, 666);
 $tblA->set(@{$dp[0]}, 666);
