@@ -15,7 +15,7 @@ use File::Slurp qw(read_file);
 
 =head1 NAME
 
-Text::LookUpTable - text based look up table operations
+Text::LookUpTable - Perl5 module for text based look up table operations
 
 =head1 SYNOPSIS
 
@@ -44,10 +44,10 @@ Text::LookUpTable - text based look up table operations
 
 =head1 DESCRIPTION
 
-This library implents operations for creating, storing, loading, and querying
-a I<look up table> structure.  The format of the stored structure is
-designed to be visually easy to understand so that it can be easily edited
-using a text editor.
+Text::LookUpTable provides operations for creating, storing, displaying,
+plotting, loading, and querying a I<look up table> structure.  The format
+of the stored structure is designed to be visually easy to understand
+so that it can be easily edited using a text editor.
 
 The authors inteded use of this library is to allow a user to edit a
 text file representation of a look up table which can then be loaded
@@ -694,6 +694,7 @@ It depends upon the rgl library [http://cran.r-project.org/web/packages/rgl/inde
  (plot displayed)
 
 =head3 WANTED: more plot types: gnuplot, etc
+
 
 =cut
 

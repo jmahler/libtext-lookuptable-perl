@@ -1,0 +1,14 @@
+Changes
+debian/changelog
+debian/compat
+debian/control
+debian/copyright
+debian/rules
+doc/examples/R-plot.pl
+lib/Text/LookUpTable.pm
+LICENSE
+Makefile.PL
+MANIFEST
+t/00-first.t
+README
+README.pod

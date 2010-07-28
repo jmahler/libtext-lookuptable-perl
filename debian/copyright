@@ -1,0 +1,29 @@
+This is the Debian GNU/Linux libfinance-streamer-perl version of the
+Finance-Streamer module by Jeremiah Mahler <jmahler@pacbell.net>
+
+Original source can be downloaded from http://search.cpan.org/dist/Finance-Streamer/
+
+Files: *
+Copyright: Copyright (c) 2001,2002, Jeremiah Mahler. All Rights Reserved.
+License: (GPL1+|Artistic)
+ This module is free software.  It may be used, redistributed
+ and/or modified under the same terms as Perl itself.
+
+Files: debian/*
+Copyright: © 2001-2004 Dirk Eddelbuettel <edd@debian.org>
+Copyright: © 2008 Debian Perl Group <debian-perl@lists.debian.org>
+License: (GPL1+|Artistic)
+ This software is free. It may be used, redistributed
+ and/or modified under the same terms as Perl itself.
+
+Perl license is:
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of either:
+
+ a) the GNU General Public License as published by the Free Software
+    Foundation; either version 1, or (at your option) any later version, or
+
+ b) the "Artistic License" which comes with Perl.
+
+On Debian GNU/Linux systems, the complete text of these licenses can be found
+in /usr/share/common-licenses/GPL and /usr/share/common-licenses/Artistic.
