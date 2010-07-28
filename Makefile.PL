@@ -7,5 +7,5 @@ WriteMakefile(
 	PREREQ_PM => {
 		"Text::Aligner" => 0.01,
 		"File::Slurp" => 0,
-	}
+	},
 );

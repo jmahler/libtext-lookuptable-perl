@@ -1,4 +1,15 @@
 Revision history for Perl extension Text::LookUpTable.
 
+0.02  Wed, 28 Jul 2010 15:45:51 -0700
+
+  [Jeremiah Mahler]
+  * Fixed erroneous inclusion of README.pod in to library directory.
+    Having README.pod in the main directory results in nice output
+    when uploaded to github.com.  But it is erroneously included by
+    ExtUtils::MakeMaker in to the lib directory.
+    No easy way of overcoming this fault was found.
+    See /usr/share/perl/5.10.1/ExtUtils/MM_Unix.pm line 1265
+  
 0.01  Wed, 28 Jul 2010
   - start
+
