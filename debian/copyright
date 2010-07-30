@@ -1,19 +1,12 @@
-This is the Debian GNU/Linux libfinance-streamer-perl version of the
-Finance-Streamer module by Jeremiah Mahler <jmahler@pacbell.net>
+This is the Debian GNU/Linux libtext-lookuptable-perl version of the
+Text-LookUpTable module by Jeremiah Mahler <jmmahler@gmail.com>
 
-Original source can be downloaded from http://search.cpan.org/dist/Finance-Streamer/
+Original source can be downloaded from http://search.cpan.org/dist/Text-LookUpTable/
 
 Files: *
-Copyright: Copyright (c) 2001,2002, Jeremiah Mahler. All Rights Reserved.
+Copyright: Copyright (c) 2010 Jeremiah Mahler. All Rights Reserved.
 License: (GPL1+|Artistic)
  This module is free software.  It may be used, redistributed
- and/or modified under the same terms as Perl itself.
-
-Files: debian/*
-Copyright: © 2001-2004 Dirk Eddelbuettel <edd@debian.org>
-Copyright: © 2008 Debian Perl Group <debian-perl@lists.debian.org>
-License: (GPL1+|Artistic)
- This software is free. It may be used, redistributed
  and/or modified under the same terms as Perl itself.
 
 Perl license is:

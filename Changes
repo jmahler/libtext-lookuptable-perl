@@ -1,5 +1,10 @@
 Revision history for Perl extension Text::LookUpTable.
 
+0.04  Thu, 29 Jul 2010 21:37:59 -0700
+
+  [Jeremiah Mahler]
+  * fixed some typos
+
 0.03  Thu, 29 Jul 2010 15:51:47 -0700
 
   [Jeremiah Mahler]

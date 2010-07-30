@@ -6,7 +6,7 @@ use Carp;
 
 use vars qw($VERSION);
 
-$VERSION = 0.03;
+$VERSION = 0.04;
 use 5.6.1;
 
 use overload q("") => \&as_string;

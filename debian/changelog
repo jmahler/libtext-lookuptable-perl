@@ -1,3 +1,10 @@
+libtext-lookuptable-perl (0.04-1) unstable; urgency=low
+
+  [Jeremiah Mahler]
+  * fixed some typos
+
+ -- Jeremiah Mahler <jmmahler@gmail.com>  Thu, 29 Jul 2010 21:37:14 -0700
+
 libtext-lookuptable-perl (0.03-1) unstable; urgency=low
 
   [Jeremiah Mahler]
@@ -5,7 +12,7 @@ libtext-lookuptable-perl (0.03-1) unstable; urgency=low
 
  -- Jeremiah Mahler <jmmahler@gmail.com>  Thu, 29 Jul 2010 15:58:21 -0700
 
-libtexe-lookuptable-perl (0.02-1) unstable; urgency=low
+libtext-lookuptable-perl (0.02-1) unstable; urgency=low
 
   [Jeremiah Mahler]
   * Fixed erroneous inclusion of README.pod in to library directory.
