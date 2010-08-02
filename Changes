@@ -1,5 +1,11 @@
 Revision history for Perl extension Text::LookUpTable.
 
+0.05  TBA
+
+  [Jeremiah Mahler]
+  * Added load_blank for creating a blank table.
+
+
 0.04  Thu, 29 Jul 2010 21:37:59 -0700
 
   [Jeremiah Mahler]

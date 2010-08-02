@@ -3,7 +3,7 @@ use strict;
 use warnings;
 
 use Test::More;
-plan tests => 37;
+plan tests => 40;
 
 use_ok('Text::LookUpTable');
 
@@ -280,6 +280,35 @@ $tblA->set(@{$dp[0]}, 666);
 
 ok(! $tblA->diff($tblB, 1));
 ok(! $tblA->diff($tblB));
+
+ok("$tblA" eq "$tblB");
+
+}
+# }}}
+
+# {{{ load_blank
+
+{
+my $str_tblA = 
+"
+               x
+
+            [0]  [0]
+       [0]   0       0
+ y     [0]   0       0
+       [0]   0       0
+       [0]   0       0
+
+";
+
+my $tblA = Text::LookUpTable->load($str_tblA);
+ok($tblA);
+
+my $tblB = Text::LookUpTable->load_blank(2, 4, "x", "y");
+ok($tblB);
+
+#print STDERR $tblA;
+#print STDERR $tblB;
 
 ok("$tblA" eq "$tblB");
 

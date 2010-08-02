@@ -281,6 +281,69 @@ sub load_file {
 }
 # }}}
 
+# {{{ load_blank
+
+=head2 Text::LookUpTable->load_blank($x_size, $y_size, $x_title, $y_title)
+
+  Returns: new object on success, FALSE on error
+
+Creates a blank object with all values initialized to zero and
+dimensions of $x_size and $y_size.
+
+=cut
+
+sub load_blank {
+	my $class = shift;
+	my $x_size = shift;
+	my $y_size = shift;
+	my $x_title = shift;
+	my $y_title = shift;
+
+	unless (defined $x_size and $x_size > 0) {
+		carp "ERROR: x_size must be a value > 0, '$x_size' invalid.";
+		return;
+	}
+
+	unless (defined $y_size and $y_size > 0) {
+		carp "ERROR: y_size must be a value > 0, '$y_size' invalid.";
+		return;
+	}
+
+	unless (defined $x_title and $x_title ne '') {
+		carp "ERROR: x_title must be a non-empty string, '$x_title'.";
+		return;
+	}
+
+	unless (defined $y_title and $y_title ne '') {
+		carp "ERROR: y_title must be a non-empty string, '$y_title'.";
+		return;
+	}
+
+    my @xs;
+    for (my $i = 0; $i < $x_size; $i++) {
+        $xs[$i] = 0;
+    }
+
+    my @ys;
+    for (my $i = 0; $i < $y_size; $i++) {
+        $ys[$i] = 0;
+    }
+
+    my @vals;
+    for (my $i = 0; $i < $y_size; $i++) {
+        push @vals, [@xs];
+    }
+
+    bless {
+        x_title => $x_title,
+        y_title => $y_title,
+        x => \@xs,
+        y => \@ys,
+        vals => \@vals,
+    }, $class;
+}
+# }}}
+
 # {{{ as_string
 
 =head2 $tbl->as_string();
