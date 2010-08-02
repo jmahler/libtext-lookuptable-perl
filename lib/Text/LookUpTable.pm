@@ -529,6 +529,54 @@ sub get_y_coords {
 }
 # }}}
 
+# {{{ set_*_coords
+
+=head2 $tbl->set_*_coords(@new_coords);
+
+  Returns TRUE on success, FALSE on error
+
+Assigns the x/y coordinates to the values given in the list.
+
+  $res = $tbl->set_x_coords(@new_x_coords);
+  $res = $tbl->set_y_coords(@new_y_coords);
+
+=cut
+
+sub set_x_coords {
+	my $self = shift;
+    my @vals = @_;
+
+    my $num_x_coords = @{$self->{x}};
+    my $num_new_x_coords = @vals;
+
+    if ($num_x_coords != $num_new_x_coords) {
+        carp "ERROR: The number of x coordinates must be the same ($num_x_coords != $num_new_x_coords)";
+        return;
+    }
+
+    $self->{x} = [@vals];
+
+    return 1;
+}
+
+sub set_y_coords {
+	my $self = shift;
+    my @vals = @_;
+
+    my $num_y_coords = @{$self->{y}};
+    my $num_new_y_coords = @vals;
+
+    if ($num_y_coords != $num_new_y_coords) {
+        carp "ERROR: The number of y coordinates must be the same ($num_y_coords != $num_new_y_coords)";
+        return;
+    }
+
+    $self->{y} = [@vals];
+
+    return 1;
+}
+# }}}
+
 # {{{ get_y_vals
 
 =head2 $tbl->get_y_vals($x_offset);

@@ -3,7 +3,7 @@ use strict;
 use warnings;
 
 use Test::More;
-plan tests => 40;
+plan tests => 43;
 
 use_ok('Text::LookUpTable');
 
@@ -307,6 +307,40 @@ ok($tblA);
 my $tblB = Text::LookUpTable->load_blank(2, 4, "x", "y");
 ok($tblB);
 
+#print STDERR $tblA;
+#print STDERR $tblB;
+
+ok("$tblA" eq "$tblB");
+
+}
+# }}}
+
+# {{{ set_*_coords
+
+{
+my $str_tblA = 
+"
+               x
+
+            [5]  [6]
+       [1]   0       0
+ y     [2]   0       0
+       [3]   0       0
+       [4]   0       0
+
+";
+
+my $tblA = Text::LookUpTable->load($str_tblA);
+ok($tblA);
+
+my $tblB = Text::LookUpTable->load_blank(2, 4, "x", "y");
+ok($tblB);
+
+$tblB->set_y_coords(1, 2, 3, 4);
+
+$tblB->set_x_coords(5, 6);
+
+# debug
 #print STDERR $tblA;
 #print STDERR $tblB;
 
