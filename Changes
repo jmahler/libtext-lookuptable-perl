@@ -6,6 +6,7 @@ Revision history for Perl extension Text::LookUpTable.
   * Added load_blank for creating a blank table.
   * Added set_x_coords and set_y_coords for assigning the
     coordinate values.
+  * documentation cleaned up
 
 
 0.04  Thu, 29 Jul 2010 21:37:59 -0700

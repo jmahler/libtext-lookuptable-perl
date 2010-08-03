@@ -22,6 +22,7 @@ Text::LookUpTable - Perl5 module for text based look up table operations
 
   $tbl = Text::LookUpTable->load_file('my_table.tbl');
   $tbl = Text::LookUpTable->load($str_tbl);
+  $tbl = Text::LookUpTable->load_blank($x_size, $y_size, $x_title, $y_title);
 
   print $tbl;
   $str_tbl = "$tbl";
@@ -36,6 +37,9 @@ Text::LookUpTable - Perl5 module for text based look up table operations
 
   @x_coords = $tbl->get_x_coords();
   @y_coords = $tbl->get_y_coords();
+
+  $res = $tbl->set_x_coords(@x_coords);
+  $res = $tbl->set_y_coords(@y_coords);
 
   @ys = $tbl->get_y_vals($x_offset);
   @xs = $tbl->get_x_vals($y_offset);
@@ -91,7 +95,6 @@ The y values start at offset 0 at the bottom and increase upward.
 
 =head1 OPERATIONS
 
-
 =cut
 
 #
@@ -137,7 +140,7 @@ sub load {
 	#
 	# The x coordinates should have num_x values in square brackets []
 	#
-	# A regular row should have num_x values + 1 coordiant in square brackets.
+	# A regular row should have num_x values + 1 coordinates in square brackets.
 	#
 	# The row with the y title should have num_x values + 2
 	#
@@ -186,7 +189,7 @@ sub load {
 			next;
 		}
 
-		# x coordiantes line across top with values in square brackets
+		# x coordinates line across top with values in square brackets
 		if (! defined $num_x_coords) {
 			$num_x_coords = $num_parts;
 
@@ -368,7 +371,7 @@ The long hand form $tbl->as_string(); should not normally be needed.
 #
 #               rpm
 #
-#             [12]   [15]  [17]  [35]   (x coordiantes title)
+#             [12]   [15]  [17]  [35]   (x coordinates title)
 #      [100]  3      15    4     2
 # map  [120]  10     12    3     4
 #      [130]  15.2   12    13    20
@@ -400,7 +403,7 @@ sub as_string {
 	}
 	@yt_column = align('left', @yt_column);
 
-	# y coordiantes column
+	# y coordinates column
 	my @y_column;
 	$y_column[0] = " ";
 	for (my $i = 1; $i < $num_rows; $i++) {
@@ -433,7 +436,7 @@ sub as_string {
 	}
 
 
-	# The x title is treated seperately without using align().
+	# The x title is treated separately without using align().
 	# All the rest is formatted with align().
 	my $x_title = $self->{x_title};
 	my $len = length $lines[0];
@@ -495,13 +498,20 @@ sub save_file {
 
 # }}}
 
-# {{{ get_x_coords
+# {{{ get_*_coords
 
-=head2 $tbl->get_x_coords();
+=head2 $tbl->get_*_coords();
 
-  Returns list of all x coordinates on success OR FALSE on error
+  Returns list of all x/y coordinates on success, FALSE on error
 
-Offset 0 starts at the LEFT of the displayed table and increases rightward.
+Offset 0 for the X coordinates start at the LEFT of the displayed table
+and increases RIGHTWARD.
+
+Offset 0 for the Y coordinates start at the TOP of the displayed table
+and increases DOWNWARD.
+
+  @xs = $tbl->get_x_coords();
+  @ys = $tbl->get_y_coords();
 
 =cut
 
@@ -510,17 +520,6 @@ sub get_x_coords {
 
 	@{$self->{x}};
 }
-# }}}
-
-# {{{ get_y_coords
-
-=head2 $tbl->get_y_coords();
-
-  Returns list of all y coordinates on success OR FALSE on error
-
-Offset 0 starts at the top of the display table and increases downward.
-
-=cut
 
 sub get_y_coords {
 	my $self = shift;
@@ -577,17 +576,19 @@ sub set_y_coords {
 }
 # }}}
 
-# {{{ get_y_vals
+# {{{ get_*_vals
 
-=head2 $tbl->get_y_vals($x_offset);
+=head2 $tbl->get_*_vals($offset);
 
   Returns list of values on success OR FALSE on error
 
-Retrive all y values for a given x offset.
-This operation uses the offset and does not calculate the position using coordinates.
+Retrives all values for a given offset.
+
+ @xs = get_x_vals($y_offset);
+ @ys = get_y_vals($x_offset);
 
 The 0 offset of the returned list will correspond to the 0 offset of the displayed
-table for y which would be at the bottom and increase upward.
+table.
 
 =cut
 
@@ -615,22 +616,6 @@ sub get_y_vals {
 
 	return @res_vals;
 }
-
-# }}}
-
-# {{{ get_x_vals
-
-=head2 $tbl->get_x_vals($y_offset);
-
-  Returns list of values on success OR FALSE on error
-
-Retrive all x values for a given y offset.
-Note, this operation does not use the coordinates, it simply uses the offset.
-
-The 0 offset of the returned list will correspond to the 0 offset of the displayed
-table for x which would be at the left and increase right ward.
-
-=cut
 
 sub get_x_vals {
 	my $self = shift;
@@ -736,13 +721,12 @@ sub get {
 
   If $break is FALSE it returns a list of positions that are different.
 
-Test whether the values two tables are different.
-If $brake is FALSE return a complete list of coordinates that are different.
-If $brake is TRUE break out and return as soon it is found that they are
-different (slight performance improvement).
+Determines whether the VALUES two tables are different.
+Does not check if the coordinates or the titles are different.
 
-This only tests the values for differences it does not test the coordinates
-or the titles,
+If $brake is FALSE return a complete list of coordinates that are different.
+If $brake is TRUE it breaks out and returns as soon it is found that they are
+different for a slight performance improvement.
 
 =cut
 
