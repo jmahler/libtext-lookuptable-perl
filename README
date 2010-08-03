@@ -8,6 +8,7 @@ NAME
 SYNOPSIS
       $tbl = Text::LookUpTable->load_file('my_table.tbl');
       $tbl = Text::LookUpTable->load($str_tbl);
+      $tbl = Text::LookUpTable->load_blank($x_size, $y_size, $x_title, $y_title);
 
       print $tbl;
       $str_tbl = "$tbl";
@@ -20,8 +21,14 @@ SYNOPSIS
       @diff_coords = $tbl->diff($tbl2);
       $diffp = $tbl->diff($tbl2, 1);  # true/false no coordinates
 
+      @xdiffs = $tb1->diff_x_coords($tb2);
+      @ydiffs = $tb1->diff_y_coords($tb2);
+
       @x_coords = $tbl->get_x_coords();
       @y_coords = $tbl->get_y_coords();
+
+      $res = $tbl->set_x_coords(@x_coords);
+      $res = $tbl->set_y_coords(@y_coords);
 
       @ys = $tbl->get_y_vals($x_offset);
       @xs = $tbl->get_x_vals($y_offset);
@@ -89,6 +96,12 @@ OPERATIONS
     Stores the name of file so that save_file can be used without having to
     specify the file again.
 
+  Text::LookUpTable->load_blank($x_size, $y_size, $x_title, $y_title)
+      Returns: new object on success, FALSE on error
+
+    Creates a blank object with all values initialized to zero and
+    dimensions of $x_size and $y_size.
+
   $tbl->as_string();
       Returns string on success, FALSE on error.
 
@@ -110,35 +123,36 @@ OPERATIONS
     will save to the last file that was used. If no last file is stored it
     will produce an error.
 
-  $tbl->get_x_coords();
-      Returns list of all x coordinates on success OR FALSE on error
+  $tbl->get_*_coords();
+      Returns list of all x/y coordinates on success, FALSE on error
 
-    Offset 0 starts at the LEFT of the displayed table and increases
-    rightward.
+    Offset 0 for the X coordinates start at the LEFT of the displayed table
+    and increases RIGHTWARD.
 
-  $tbl->get_y_coords();
-      Returns list of all y coordinates on success OR FALSE on error
+    Offset 0 for the Y coordinates start at the TOP of the displayed table
+    and increases DOWNWARD.
 
-    Offset 0 starts at the top of the display table and increases downward.
+      @xs = $tbl->get_x_coords();
+      @ys = $tbl->get_y_coords();
 
-  $tbl->get_y_vals($x_offset);
+  $tbl->set_*_coords(@new_coords);
+      Returns TRUE on success, FALSE on error
+
+    Assigns the x/y coordinates to the values given in the list.
+
+      $res = $tbl->set_x_coords(@new_x_coords);
+      $res = $tbl->set_y_coords(@new_y_coords);
+
+  $tbl->get_*_vals($offset);
       Returns list of values on success OR FALSE on error
 
-    Retrive all y values for a given x offset. This operation uses the
-    offset and does not calculate the position using coordinates.
+    Retrives all values for a given offset.
+
+     @xs = get_x_vals($y_offset);
+     @ys = get_y_vals($x_offset);
 
     The 0 offset of the returned list will correspond to the 0 offset of the
-    displayed table for y which would be at the bottom and increase upward.
-
-  $tbl->get_x_vals($y_offset);
-      Returns list of values on success OR FALSE on error
-
-    Retrive all x values for a given y offset. Note, this operation does not
-    use the coordinates, it simply uses the offset.
-
-    The 0 offset of the returned list will correspond to the 0 offset of the
-    displayed table for x which would be at the left and increase right
-    ward.
+    displayed table.
 
   $tbl->set($x, $y, $val);
       Returns TRUE on success OR FALSE on error
@@ -155,13 +169,18 @@ OPERATIONS
 
       If $break is FALSE it returns a list of positions that are different.
 
-    Test whether the values two tables are different. If $brake is FALSE
-    return a complete list of coordinates that are different. If $brake is
-    TRUE break out and return as soon it is found that they are different
-    (slight performance improvement).
+    Determines whether the VALUES two tables are different. Does not check
+    if the coordinates or the titles are different.
 
-    This only tests the values for differences it does not test the
-    coordinates or the titles,
+    If $brake is FALSE return a complete list of coordinates that are
+    different. If $brake is TRUE it breaks out and returns as soon it is
+    found that they are different for a slight performance improvement.
+
+  $tb1->diff_*_coords($tb2)
+      Returns list of differences on success, FALSE on error
+
+     @xdiffs = $tb1->diff_x_coords($tb2);
+     @ydiffs = $tb1->diff_y_coords($tb2);
 
   $tbl->as_plot('plot type', [type specific args ...] );
       Returns TRUE on success, FALSE on error.
