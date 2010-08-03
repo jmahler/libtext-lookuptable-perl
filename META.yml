@@ -26,4 +26,4 @@ resources:
   homepage: http://search.cpan.org/dist/Text-LookUpTable/
   license: http://dev.perl.org/licenses/
   repository: http://github.com/jmahler/libtext-lookuptable-perl
-version: 0.04
+version: 0.05
