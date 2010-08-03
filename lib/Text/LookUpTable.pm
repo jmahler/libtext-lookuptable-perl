@@ -270,7 +270,7 @@ sub load_file {
 	my $file = shift;
 
 	unless (-e $file) {
-		croak "ERROR: File '$file' does not exist.";
+		carp "ERROR: File '$file' does not exist.";
 		return;
 	}
 
@@ -477,7 +477,7 @@ sub save_file {
 	my $file = shift;
 
 	if (! defined $file or $file =~ /^[\s]+$/) {
-		croak "ERROR: trying to save but no file specified and no file stored.";
+		carp "ERROR: trying to save but no file specified and no file stored.";
 		return;
 	}
 
@@ -485,7 +485,7 @@ sub save_file {
 
 	my $res = open FILE, "> $file";
 	if (! $res) {
-		croak "ERROR: unable to open file '$file': $!";
+		carp "ERROR: unable to open file '$file': $!";
 		return;
 	}
 
@@ -600,7 +600,7 @@ sub get_y_vals {
 	my $num_y = @{$self->{y}};
 
 	unless ($x < $num_x) {
-		croak "ERROR: there is no y value at position $x\n";
+		carp "ERROR: there is no y value at position $x";
 		return;
 	}
 
@@ -624,7 +624,7 @@ sub get_x_vals {
 	my $num_x = @{$self->{x}};
 
 	unless ($y < $num_x) {
-		croak "ERROR: y offset $y is out of bounds\n";
+		carp "ERROR: y offset $y is out of bounds";
 		return;
 	}
 
@@ -655,12 +655,12 @@ sub set {
 	my $num_y = @{$self->{y}};
 
 	unless ($y < $num_y) {
-		croak "ERROR: A y offset of $y is beyond the boundary ".($num_y - 1)."";
+		carp "ERROR: A y offset of $y is beyond the boundary ".($num_y - 1)."";
 		return;
 	}
 
 	unless ($x < $num_x) {
-		croak "ERROR: A x offset of $x is beyond the boundary ".($num_x - 1)."";
+		carp "ERROR: A x offset of $x is beyond the boundary ".($num_x - 1)."";
 		return;
 	}
 
@@ -690,12 +690,12 @@ sub get {
 	my $num_y = @{$self->{y}};
 
 	unless ($y < $num_y) {
-		croak "ERROR: A y offset of $y is beyond the boundary ".($num_y - 1)."";
+		carp "ERROR: A y offset of $y is beyond the boundary ".($num_y - 1)."";
 		return;
 	}
 
 	unless ($x < $num_x) {
-		croak "ERROR: A x offset of $x is beyond the boundary ".($num_x - 1)."";
+		carp "ERROR: A x offset of $x is beyond the boundary ".($num_x - 1)."";
 		return;
 	}
 

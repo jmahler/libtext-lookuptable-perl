@@ -7,6 +7,7 @@ Revision history for Perl extension Text::LookUpTable.
   * Added set_x_coords and set_y_coords for assigning the
     coordinate values.
   * documentation cleaned up
+  * change 'croak' to 'carp'
 
 
 0.04  Thu, 29 Jul 2010 21:37:59 -0700
