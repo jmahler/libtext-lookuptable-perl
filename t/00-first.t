@@ -3,7 +3,7 @@ use strict;
 use warnings;
 
 use Test::More;
-plan tests => 43;
+plan tests => 49;
 
 use_ok('Text::LookUpTable');
 
@@ -349,3 +349,53 @@ ok("$tblA" eq "$tblB");
 }
 # }}}
 
+# {{{ diff_*_coords
+
+{
+
+# These tables have the same values but different coordinates.
+
+my $str_tblA = 
+"
+                     rpm
+
+               [1.25]  [3.35]  [4.97]
+       [100]   1       2       3
+ map   [200]   4       5       6
+       [300]   7       8       9
+       [800]   10      11      12
+
+";
+
+my $str_tblB = 
+"
+                     rpm
+
+               [2.25]  [3.35]  [4.97]
+       [100]   1       2       3
+ map   [200]   4       5       6
+       [666]   7       8       9
+       [800]   10      11      666
+
+";
+
+my $tblA = Text::LookUpTable->load($str_tblA);
+ok($tblA);
+
+my $tblB = Text::LookUpTable->load($str_tblB);
+ok($tblB);
+
+{
+my @diff = $tblA->diff_x_coords($tblB);
+ok(1 == @diff);
+ok($diff[0] == 0);
+}
+
+{
+my @diff = $tblA->diff_y_coords($tblB);
+ok(1 == @diff);
+ok($diff[0] == 2);
+}
+
+}
+# }}}

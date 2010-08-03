@@ -35,6 +35,9 @@ Text::LookUpTable - Perl5 module for text based look up table operations
   @diff_coords = $tbl->diff($tbl2);
   $diffp = $tbl->diff($tbl2, 1);  # true/false no coordinates
 
+  @xdiffs = $tb1->diff_x_coords($tb2);
+  @ydiffs = $tb1->diff_y_coords($tb2);
+
   @x_coords = $tbl->get_x_coords();
   @y_coords = $tbl->get_y_coords();
 
@@ -758,6 +761,61 @@ sub diff {
 		return 0;
 	}
 }
+# }}}
+
+# {{{ diff_*_coords
+
+=head2 $tb1->diff_*_coords($tb2)
+
+  Returns list of differences on success, FALSE on error
+
+ @xdiffs = $tb1->diff_x_coords($tb2);
+ @ydiffs = $tb1->diff_y_coords($tb2);
+
+=cut
+
+sub diff_x_coords {
+	my $tbl1 = shift;
+	my $tbl2 = shift;
+
+    my @coords1 = $tbl1->get_x_coords();
+    my @coords2 = $tbl2->get_x_coords();
+
+    _diff_coords(\@coords1, \@coords2);
+}
+
+sub diff_y_coords {
+	my $tbl1 = shift;
+	my $tbl2 = shift;
+
+    my @cs1 = $tbl1->get_y_coords();
+    my @cs2 = $tbl2->get_y_coords();
+
+    _diff_coords(\@cs1, \@cs2);
+}
+
+sub _diff_coords {
+	my $cs1 = shift;
+	my $cs2 = shift;
+
+    my $num_cs1 = @$cs1;
+    my $num_cs2 = @$cs2;
+
+    if ($num_cs1 != $num_cs2) {
+        carp "ERROR: cant compare tables with different geometries";
+        return;
+    }
+
+    my @diffs;
+	for (my $i = 0; $i < $num_cs1; $i++) {
+        if ($cs1->[$i] != $cs2->[$i]) {
+            push @diffs, $i;
+        }
+	}
+
+	return @diffs;
+}
+
 # }}}
 
 # {{{ as_plot

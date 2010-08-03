@@ -8,6 +8,7 @@ Revision history for Perl extension Text::LookUpTable.
     coordinate values.
   * documentation cleaned up
   * change 'croak' to 'carp'
+  * added diff_*_coords operation to find differences in coordinates
 
 
 0.04  Thu, 29 Jul 2010 21:37:59 -0700
