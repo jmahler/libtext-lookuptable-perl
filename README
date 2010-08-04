@@ -217,6 +217,9 @@ PREREQUISITES
      The version numbers given have been tested and shown to work
      but other versions may work as well.
 
+VERSION
+    This document refers to Text::LookUpTable version 0.05.
+
 REFERENCES
       [1]  MegaSquirt Engine Management System
            http://www.msextra.com/
@@ -231,7 +234,10 @@ REFERENCES
            http://www.gnuplot.info/
 
 AUTHOR
-    Jeremiah Mahler <jmmahler@gmail.com>
+        Jeremiah Mahler
+        CPAN ID: JERI
+        jmmahler@gmail.com
+        http://www.google.com/profiles/jmmahler#about
 
 COPYRIGHT
     Copyright (c) 2010, Jeremiah Mahler. All Rights Reserved. This module is
