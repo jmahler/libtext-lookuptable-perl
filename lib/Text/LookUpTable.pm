@@ -921,6 +921,10 @@ sub as_plot {
  The version numbers given have been tested and shown to work
  but other versions may work as well.
 
+=head1 VERSION
+
+This document refers to Text::LookUpTable version 0.05.
+
 =head1 REFERENCES
 
   [1]  MegaSquirt Engine Management System
@@ -937,7 +941,10 @@ sub as_plot {
 
 =head1 AUTHOR
 
-Jeremiah Mahler <jmmahler@gmail.com>
+    Jeremiah Mahler
+    CPAN ID: JERI
+    jmmahler@gmail.com
+    http://www.google.com/profiles/jmmahler#about
 
 =head1 COPYRIGHT
 
