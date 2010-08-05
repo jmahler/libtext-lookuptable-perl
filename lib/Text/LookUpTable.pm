@@ -941,9 +941,8 @@ This document refers to Text::LookUpTable version 0.05.
 
 =head1 AUTHOR
 
-    Jeremiah Mahler
+    Jeremiah Mahler <jmmahler@gmail.com>
     CPAN ID: JERI
-    jmmahler@gmail.com
     http://www.google.com/profiles/jmmahler#about
 
 =head1 COPYRIGHT

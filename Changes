@@ -1,6 +1,6 @@
 Revision history for Perl extension Text::LookUpTable.
 
-0.05  TBA
+0.05  Wed, 04 Aug 2010 17:25:27 -0700
 
   [Jeremiah Mahler]
   * Added load_blank for creating a blank table.
@@ -9,6 +9,8 @@ Revision history for Perl extension Text::LookUpTable.
   * documentation cleaned up
   * change 'croak' to 'carp'
   * added diff_*_coords operation to find differences in coordinates
+  * Removed load_file test that caused test failure by CPAN Testers
+    [http://www.cpantesters.org/cpan/report/07648452-b19f-3f77-b713-d32bba55d77f]
 
 
 0.04  Thu, 29 Jul 2010 21:37:59 -0700

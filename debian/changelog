@@ -1,7 +1,10 @@
+
 libtext-lookuptable-perl (0.05-1) unstable; urgency=low
 
   [Jeremiah Mahler]
   * 0.04-1 -> 0.05-1, see Changes
+
+ -- Jeremiah Mahler <jmmahler@gmail.com>  Wed, 04 Aug 2010 17:30:14 -0700
 
 libtext-lookuptable-perl (0.04-1) unstable; urgency=low
 
