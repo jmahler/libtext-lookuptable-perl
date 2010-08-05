@@ -6,7 +6,7 @@ use Carp;
 
 use vars qw($VERSION);
 
-$VERSION = 0.05;
+$VERSION = 0.06;
 use 5.6.1;
 
 use overload q("") => \&as_string;
@@ -923,7 +923,7 @@ sub as_plot {
 
 =head1 VERSION
 
-This document refers to Text::LookUpTable version 0.05.
+This document refers to Text::LookUpTable version 0.06.
 
 =head1 REFERENCES
 

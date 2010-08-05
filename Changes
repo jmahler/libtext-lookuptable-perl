@@ -1,5 +1,10 @@
 Revision history for Perl extension Text::LookUpTable.
 
+0.06  Thu, 05 Aug 2010 00:01:26 -0700
+
+  [Jeremiah Mahler]
+  * added flatten operation
+
 0.05  Wed, 04 Aug 2010 17:25:27 -0700
 
   [Jeremiah Mahler]

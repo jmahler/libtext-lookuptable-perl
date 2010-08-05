@@ -1,4 +1,12 @@
 
+libtext-lookuptable-perl (0.06-1) unstable; urgency=low
+
+  [Jeremiah Mahler]
+  * new version
+
+ -- Jeremiah Mahler <jmmahler@gmail.com>  Thu, 05 Aug 2010 00:02:17 -0700
+
+
 libtext-lookuptable-perl (0.05-1) unstable; urgency=low
 
   [Jeremiah Mahler]
