@@ -47,6 +47,8 @@ Text::LookUpTable - Perl5 module for text based look up table operations
   @ys = $tbl->get_y_vals($x_offset);
   @xs = $tbl->get_x_vals($y_offset);
 
+  @vals = $tbl->flatten();
+
   $str_plot = $tbl->as_plot('R');
   print FILE $str_plot;
 
@@ -624,18 +626,49 @@ sub get_x_vals {
 	my $self = shift;
 	my $y = shift;
 
-	my $num_x = @{$self->{x}};
+	my $num_y = @{$self->{y}};
 
-	unless ($y < $num_x) {
+	unless ($y < $num_y) {
 		carp "ERROR: y offset $y is out of bounds";
 		return;
 	}
 
-	my $vals = $self->{vals}; 
-
 	return (@{$self->{vals}[$y]});
 }
 
+# }}}
+
+# {{{ flatten
+
+=head2 $tbl->flatten()
+
+  Returns TRUE on success, FALSE on error
+
+  @vals = $tbl->flatten();
+
+Flatten the table of values in to a single list.
+This is often needed because a controller expects a single list
+of values and not a two dimensional array.
+
+=cut
+
+sub flatten {
+	my $self = shift;
+
+    my @xs = $self->get_x_vals(0);
+    my @ys = $self->get_y_vals(0);
+
+    my $num_x = @xs;
+    my $num_y = @ys;
+
+    my @vals;
+
+    for (my $i = 0; $i < $num_y; $i++) {
+        unshift @vals, ($self->get_x_vals($i));
+    }
+
+	return @vals;
+}
 # }}}
 
 # {{{ set

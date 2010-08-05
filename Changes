@@ -4,6 +4,7 @@ Revision history for Perl extension Text::LookUpTable.
 
   [Jeremiah Mahler]
   * added flatten operation
+  * fixed bug in get_x_vals
 
 0.05  Wed, 04 Aug 2010 17:25:27 -0700
 

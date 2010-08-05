@@ -3,7 +3,7 @@ use strict;
 use warnings;
 
 use Test::More;
-plan tests => 46;
+plan tests => 52;
 
 use_ok('Text::LookUpTable');
 
@@ -397,6 +397,37 @@ my @diff = $tblA->diff_y_coords($tblB);
 ok(1 == @diff);
 ok($diff[0] == 2);
 }
+
+}
+# }}}
+
+# {{{ flatten
+
+{
+
+my $str_tbl = 
+"
+                     rpm
+
+               [1.25]  [3.35]  [4.97]
+       [100]   1       2       3
+ map   [200]   4       5       6
+       [300]   7       8       9
+       [800]   10      11      12
+
+";
+
+
+my $tbl = Text::LookUpTable->load($str_tbl);
+my @vals = $tbl->flatten();
+
+ok(12 == @vals);
+
+ok(10 == $vals[0]);
+ok(11 == $vals[1]);
+ok(12 == $vals[2]);
+ok(7 == $vals[3]);
+ok(3 == $vals[11]);
 
 }
 # }}}

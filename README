@@ -33,6 +33,8 @@ SYNOPSIS
       @ys = $tbl->get_y_vals($x_offset);
       @xs = $tbl->get_x_vals($y_offset);
 
+      @vals = $tbl->flatten();
+
       $str_plot = $tbl->as_plot('R');
       print FILE $str_plot;
 
@@ -153,6 +155,15 @@ OPERATIONS
 
     The 0 offset of the returned list will correspond to the 0 offset of the
     displayed table.
+
+  $tbl->flatten()
+      Returns TRUE on success, FALSE on error
+
+      @vals = $tbl->flatten();
+
+    Flatten the table of values in to a single list. This is often needed
+    because a controller expects a single list of values and not a two
+    dimensional array.
 
   $tbl->set($x, $y, $val);
       Returns TRUE on success OR FALSE on error
