@@ -1,12 +1,14 @@
 Source: libtext-lookuptable-perl
 Section: perl
 Priority: optional
-Maintainer: TBD
+Maintainer: Jeremiah Mahler <jmmahler@gmail.com>
 Uploaders: TBD
 Build-Depends: debhelper (>= 6)
 Build-Depends-Indep: perl
 Standards-Version: 3.7.3
-Homepage:
+Homepage: http://search.cpan.org/dist/Text-LookUpTable/
+Vcs-Git: git://github.com/jmahler/libtext-lookuptable-perl.git
+Vcs-Browser: http://github.com/jmahler/libtext-lookuptable-perl
 
 Package: libtext-lookuptable-perl
 Architecture: all
