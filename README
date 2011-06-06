@@ -2,13 +2,14 @@ Generated from the Text::LookUpTable documentation:
 
   perldoc -t lib/Text/LookUpTable.pm > README
 
+
 NAME
     Text::LookUpTable - Perl5 module for text based look up table operations
 
 SYNOPSIS
       $tbl = Text::LookUpTable->load_file('my_table.tbl');
       $tbl = Text::LookUpTable->load($str_tbl);
-      $tbl = Text::LookUpTable->load_blank($x_size, $y_size, $x_title, $y_title);
+      $tbl = Text::LookUpTable->build($x_size, $y_size, $x_title, $y_title);
 
       print $tbl;
       $str_tbl = "$tbl";
@@ -72,7 +73,7 @@ STRING FORMAT
       map  [90]   13.0     14.5    15.3    16.8
            [80]   12.0     13.5    14.2    15.7
 
-    The x (across top) and y (left column) coordinates have there values
+    The x (across top) and y (left column) coordinates have their values
     enclosed in square brackets. All values must be present. And the titles
     can only span one line. There can be any number of lines and spaces as
     long as the values can be discerned. When saving and restoring a table
@@ -98,7 +99,7 @@ OPERATIONS
     Stores the name of file so that save_file can be used without having to
     specify the file again.
 
-  Text::LookUpTable->load_blank($x_size, $y_size, $x_title, $y_title)
+  Text::LookUpTable->build($x_size, $y_size, $x_title, $y_title)
       Returns: new object on success, FALSE on error
 
     Creates a blank object with all values initialized to zero and
@@ -183,8 +184,8 @@ OPERATIONS
     Determines whether the VALUES two tables are different. Does not check
     if the coordinates or the titles are different.
 
-    If $brake is FALSE return a complete list of coordinates that are
-    different. If $brake is TRUE it breaks out and returns as soon it is
+    If $break is FALSE return a complete list of coordinates that are
+    different. If $break is TRUE it breaks out and returns as soon it is
     found that they are different for a slight performance improvement.
 
   $tb1->diff_*_coords($tb2)
@@ -194,7 +195,7 @@ OPERATIONS
      @ydiffs = $tb1->diff_y_coords($tb2);
 
   $tbl->as_plot('plot type', [type specific args ...] );
-      Returns TRUE on success, FALSE on error.
+      Returns: string on success, FALSE on error
 
     Convert the table to a representation suitable for plotting. The string
     may need to be output to a file depending on how the plotting program is
@@ -203,22 +204,27 @@ OPERATIONS
     See below for the various plot types.
 
    R  [www.r-project.org]
-      Returns: string on success, FALSE on error
-
     The string can be output to a file and then the file can be sourced to
     produce a plot. It depends upon the rgl library
     [http://cran.r-project.org/web/packages/rgl/index.html].
 
      $tbl->as_plot('R');
 
-     user$ a.out > file.R
-     user$ R
+     shell$ ./a.out > file.R
+     shell$ R
 
      > source('file.R')
 
      (plot displayed)
 
-   WANTED: more plot types: gnuplot, etc
+   Maxima [maxima.sourceforge.net]
+    Example usage using lutasplot.pl utility (in bin directory).
+
+     shell$ lutasplot.pl veTable1 Maxima > veTable1.maxima 
+     shell$ maxima
+     (%i1) batch("veTable1.maxima");
+        (..., plot output, etc)
+
 PREREQUISITES
      Module                Version
      ------                -------
@@ -233,16 +239,19 @@ VERSION
 
 REFERENCES
       [1]  MegaSquirt Engine Management System
-           http://www.msextra.com/
+           http://www.msextra.com
 
       [2]  R Project
-           http://www.r-project.org/
+           http://www.r-project.org
 
       [3]  rgl: 3D visualization device system (OpenGL)
            http://cran.r-project.org/web/packages/rgl/index.html
 
       [4]  Gnuplot
-           http://www.gnuplot.info/
+           http://www.gnuplot.info
+
+      [5]  Maxima
+           http://maxima.sourceforge.net
 
 AUTHOR
         Jeremiah Mahler <jmmahler@gmail.com>
