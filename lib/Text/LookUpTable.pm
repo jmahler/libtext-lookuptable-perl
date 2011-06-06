@@ -22,7 +22,7 @@ Text::LookUpTable - Perl5 module for text based look up table operations
 
   $tbl = Text::LookUpTable->load_file('my_table.tbl');
   $tbl = Text::LookUpTable->load($str_tbl);
-  $tbl = Text::LookUpTable->load_blank($x_size, $y_size, $x_title, $y_title);
+  $tbl = Text::LookUpTable->build($x_size, $y_size, $x_title, $y_title);
 
   print $tbl;
   $str_tbl = "$tbl";
@@ -88,7 +88,7 @@ look like the example below.
   map  [90]   13.0     14.5    15.3    16.8
        [80]   12.0     13.5    14.2    15.7
 
-The x (across top) and y (left column) coordinates have there values
+The x (across top) and y (left column) coordinates have their values
 enclosed in square brackets.  All values must be present.
 And the titles can only span one line.  There can be any number of
 lines and spaces as long as the values can be discerned.
@@ -289,9 +289,9 @@ sub load_file {
 }
 # }}}
 
-# {{{ load_blank
+# {{{ build
 
-=head2 Text::LookUpTable->load_blank($x_size, $y_size, $x_title, $y_title)
+=head2 Text::LookUpTable->build($x_size, $y_size, $x_title, $y_title)
 
   Returns: new object on success, FALSE on error
 
@@ -300,7 +300,7 @@ dimensions of $x_size and $y_size.
 
 =cut
 
-sub load_blank {
+sub build {
 	my $class = shift;
 	my $x_size = shift;
 	my $y_size = shift;
@@ -760,8 +760,8 @@ sub get {
 Determines whether the VALUES two tables are different.
 Does not check if the coordinates or the titles are different.
 
-If $brake is FALSE return a complete list of coordinates that are different.
-If $brake is TRUE it breaks out and returns as soon it is found that they are
+If $break is FALSE return a complete list of coordinates that are different.
+If $break is TRUE it breaks out and returns as soon it is found that they are
 different for a slight performance improvement.
 
 =cut
@@ -873,14 +873,14 @@ It depends upon the rgl library [http://cran.r-project.org/web/packages/rgl/inde
 
  $tbl->as_plot('R');
 
- user$ a.out > file.R
+ user$ ./a.out > file.R
  user$ R
 
  > source('file.R')
 
  (plot displayed)
 
-=head3 WANTED: more plot types: gnuplot, etc
+=head3 TODO: more plot types: gnuplot, etc
 
 
 =cut

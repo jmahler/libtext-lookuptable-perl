@@ -2,8 +2,7 @@
 use strict;
 use warnings;
 
-use Test::More;
-plan tests => 52;
+use Test::More tests => 52;
 
 use_ok('Text::LookUpTable');
 
@@ -287,7 +286,7 @@ ok("$tblA" eq "$tblB");
 }
 # }}}
 
-# {{{ load_blank
+# {{{ build
 
 {
 my $str_tblA = 
@@ -305,7 +304,7 @@ my $str_tblA =
 my $tblA = Text::LookUpTable->load($str_tblA);
 ok($tblA);
 
-my $tblB = Text::LookUpTable->load_blank(2, 4, "x", "y");
+my $tblB = Text::LookUpTable->build(2, 4, "x", "y");
 ok($tblB);
 
 #print STDERR $tblA;
@@ -334,7 +333,7 @@ my $str_tblA =
 my $tblA = Text::LookUpTable->load($str_tblA);
 ok($tblA);
 
-my $tblB = Text::LookUpTable->load_blank(2, 4, "x", "y");
+my $tblB = Text::LookUpTable->build(2, 4, "x", "y");
 ok($tblB);
 
 $tblB->set_y_coords(1, 2, 3, 4);
