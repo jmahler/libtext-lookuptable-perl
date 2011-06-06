@@ -920,6 +920,9 @@ sub as_plot {
 			}
 		}
 
+		my $x_title = $self->{x_title};
+		my $y_title = $self->{y_title};
+
 		# R expects the x, y axis data to be increasing
 		# Currently the y axis is the opposite
 		# The data can be reversed just to get the plot to work
@@ -936,7 +939,8 @@ sub as_plot {
 		$str .= "bg3d(\"white\")\n";
 		$str .= "material3d(\"black\")\n";
 		$str .= "\n";
-		$str .= "persp3d(x, y, z, col=\"lightblue\", xlab=\"rpm\", ylab=\"map\", zlab=\"ign\")\n";
+		$str .= "persp3d(x, y, z, col=\"lightblue\", xlab=\"$x_title\", ylab=\"$y_title\", zlab=\"\")\n";
+		# TODO - how to set zlab?
 	}
 
 	return $str;
