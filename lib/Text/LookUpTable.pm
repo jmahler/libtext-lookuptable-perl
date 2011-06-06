@@ -30,6 +30,7 @@ Text::LookUpTable - Perl5 module for text based look up table operations
   $tbl->save_file();
   $tbl->save_file('my_table.tbl');
 
+  $val = $tbl->get($x, $y);
   $tbl->set($x, $y, $val);
 
   @diff_coords = $tbl->diff($tbl2);
@@ -480,6 +481,10 @@ If no last file is stored it will produce an error.
 sub save_file {
 	my $self = shift;
 	my $file = shift;
+
+	if (! defined $file or $file =~ /^[\s]+$/) {
+		$file = $self->{file};
+	}
 
 	if (! defined $file or $file =~ /^[\s]+$/) {
 		carp "ERROR: trying to save but no file specified and no file stored.";
