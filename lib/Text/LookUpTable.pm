@@ -51,6 +51,7 @@ Text::LookUpTable - Perl5 module for text based look up table operations
   @vals = $tbl->flatten();
 
   $str_plot = $tbl->as_plot('R');
+  $str_plot = $tbl->as_plot('Maxima');
   print FILE $str_plot;
 
 =head1 DESCRIPTION
