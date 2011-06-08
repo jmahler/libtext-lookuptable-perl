@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 46;
+use Test::More tests => 80;
 
 use_ok('Text::LookUpTable');
 
@@ -402,13 +402,69 @@ my @x_coords = $lut->get_x_coords();
 ok($x_coords[0] == 1000);
 ok($x_coords[4] == 3000);
 
-my @points = $lut->lookup_points(2010, 85, 1);
+my @points;
 
+# lookup points in the middle
+@points = $lut->lookup_points(2010, 85, 1);
 ok(9 == @points);
-
 ok(grep { ($_->[0] == 3 and $_->[1] == 3); } @points);
 ok(grep { ($_->[0] == 1 and $_->[1] == 1); } @points);
 ok(grep { ($_->[0] == 1 and $_->[1] == 2); } @points);
+
+
+#looku points at a corner
+@points = $lut->lookup_points(3010, 150.0, 1);
+ok(4 == @points);
+ok(grep { ($_->[0] == 3 and $_->[1] == 3); } @points);
+ok(grep { ($_->[0] == 4 and $_->[1] == 4); } @points);
+ok(grep { ($_->[0] == 3 and $_->[1] == 4); } @points);
+ok(grep { ($_->[0] == 4 and $_->[1] == 4); } @points);
+
+# should still be at a corner when close enough but below
+@points = $lut->lookup_points(2990, 96, 1);
+ok(4 == @points);
+ok(grep { ($_->[0] == 3 and $_->[1] == 3); } @points);
+ok(grep { ($_->[0] == 4 and $_->[1] == 4); } @points);
+ok(grep { ($_->[0] == 3 and $_->[1] == 4); } @points);
+ok(grep { ($_->[0] == 4 and $_->[1] == 4); } @points);
+
+# at a different corner
+@points = $lut->lookup_points(900, 96, 1);
+ok(4 == @points);
+ok(grep { ($_->[0] == 0 and $_->[1] == 3); } @points);
+ok(grep { ($_->[0] == 0 and $_->[1] == 4); } @points);
+ok(grep { ($_->[0] == 1 and $_->[1] == 3); } @points);
+ok(grep { ($_->[0] == 1 and $_->[1] == 4); } @points);
+
+# bottom side
+@points = $lut->lookup_points(1600, 62, 1);
+ok(6 == @points);
+ok(grep { ($_->[0] == 0 and $_->[1] == 0); } @points);
+ok(grep { ($_->[0] == 0 and $_->[1] == 1); } @points);
+ok(grep { ($_->[0] == 1 and $_->[1] == 0); } @points);
+ok(grep { ($_->[0] == 1 and $_->[1] == 1); } @points);
+ok(grep { ($_->[0] == 2 and $_->[1] == 0); } @points);
+ok(grep { ($_->[0] == 2 and $_->[1] == 1); } @points);
+
+# a wider range
+@points = $lut->lookup_points(2900, 62, 2);
+ok(9 == @points);
+ok(grep { ($_->[0] == 2 and $_->[1] == 0); } @points);
+ok(grep { ($_->[0] == 2 and $_->[1] == 1); } @points);
+ok(grep { ($_->[0] == 2 and $_->[1] == 2); } @points);
+ok(grep { ($_->[0] == 3 and $_->[1] == 1); } @points);
+ok(grep { ($_->[0] == 3 and $_->[1] == 0); } @points);
+ok(grep { ($_->[0] == 3 and $_->[1] == 2); } @points);
+ok(grep { ($_->[0] == 4 and $_->[1] == 1); } @points);
+ok(grep { ($_->[0] == 4 and $_->[1] == 0); } @points);
+ok(grep { ($_->[0] == 4 and $_->[1] == 2); } @points);
+
+# a zero range
+@points = $lut->lookup_points(2900, 62, 0);
+ok(1 == @points);
+ok(grep { ($_->[0] == 4 and $_->[1] == 0); } @points);
+
+
 }
 # }}}
 
