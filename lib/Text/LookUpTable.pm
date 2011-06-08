@@ -45,11 +45,6 @@ Text::LookUpTable - Perl5 module for text based look up table operations
   $res = $tbl->set_x_coords(@x_coords);
   $res = $tbl->set_y_coords(@y_coords);
 
-  @ys = $tbl->get_y_vals($x_offset);
-  @xs = $tbl->get_x_vals($y_offset);
-
-  @vals = $tbl->flatten();
-
   $str_plot = $tbl->as_plot('R');
   $str_plot = $tbl->as_plot('Maxima');
   print FILE $str_plot;
@@ -128,7 +123,6 @@ sub load {
 	my $class = shift;
 	my $str_tbl = shift;
 
-
 	#  An example of a displayed look up table.
 	#
     #                        rpm
@@ -167,7 +161,7 @@ sub load {
 		my @raw_parts = split /[\s]+/, $line;
 
 		# split saves some entries even though they are blank.
-		# Particularly the title has two values and one is blank.
+		# Specifically the title has two values and one is blank.
 		# Remove these blank entries.
 		my @parts;
 		foreach my $part (@raw_parts) {
@@ -239,15 +233,14 @@ sub load {
 			push @y_coords, $part;
 
 			push @vals, [@parts];
-
-			next;
 		}
-
-		# If we got here something is wrong!
-		my $line_num = $i + 1;
-		carp "ERROR: The data on line " . ($i + 1) . " or before is irregular";
-		return;
 	}
+
+	# Processing (above) is top to bottom but the
+	# should be stored (for access) from bottom to top
+	# so that the smallest value and coordinates are at [0, 0]
+	@y_coords = reverse @y_coords;
+	@vals = reverse @vals;
 
 	bless {
 		x_title => $x_title,
@@ -378,10 +371,10 @@ The long hand form $tbl->as_string(); should not normally be needed.
 #
 #               rpm
 #
-#             [12]   [15]  [17]  [35]   (x coordinates title)
-#      [100]  3      15    4     2
+#             [12]   [15]  [17]  [35]
+#      [130]  3      15    4     2
 # map  [120]  10     12    3     4
-#      [130]  15.2   12    13    20
+#      [100]  15.2   12    13    20
 #
 
 
@@ -414,15 +407,17 @@ sub as_string {
 	my @y_column;
 	$y_column[0] = " ";
 	for (my $i = 1; $i < $num_rows; $i++) {
-		$y_column[$i] = " [" . $self->{y}[$i - 1] . "] ";
+		$y_column[$i] = " [" . $self->{y}[($num_rows - 1) - $i] . "] ";
 	}
 	@y_column = align('left', @y_column);
 
 	# x coordinate and values column
 	my @val_cols;
 	for (my $i = 0; $i < $num_x; $i++) {
-		                                              # XXX
-		my @vals = ("[" . $self->{x}[$i] . "]", (reverse $self->get_y_vals($i)));
+		my @vals = ("[" . $self->{x}[$i] . "]");
+		for (my $j = 0; $j < $num_y; $j++) {
+			push @vals, $self->get($i, ($num_y - 1) - $j);
+		}
 
 		my @col = align('left', @vals);
 
@@ -518,8 +513,8 @@ sub save_file {
 Offset 0 for the X coordinates start at the LEFT of the displayed table
 and increases RIGHTWARD.
 
-Offset 0 for the Y coordinates start at the TOP of the displayed table
-and increases DOWNWARD.
+Offset 0 for the Y coordinates start at the BOTTOM of the displayed table
+and increases UPWARD.
 
   @xs = $tbl->get_x_coords();
   @ys = $tbl->get_y_coords();
@@ -546,6 +541,9 @@ sub get_y_coords {
   Returns TRUE on success, FALSE on error
 
 Assigns the x/y coordinates to the values given in the list.
+
+The coordinates must be in ascending order so that lookup_points, etc will
+work correctly.
 
   $res = $tbl->set_x_coords(@new_x_coords);
   $res = $tbl->set_y_coords(@new_y_coords);
@@ -580,100 +578,11 @@ sub set_y_coords {
         carp "ERROR: The number of y coordinates must be the same ($num_y_coords != $num_new_y_coords)";
         return;
     }
+	@vals = reverse @vals;
 
     $self->{y} = [@vals];
 
     return 1;
-}
-# }}}
-
-# {{{ get_*_vals
-
-=head2 $tbl->get_*_vals($offset);
-
-  Returns list of values on success OR FALSE on error
-
-Retrives all values for a given offset.
-
- @xs = get_x_vals($y_offset);
- @ys = get_y_vals($x_offset);
-
-The 0 offset of the returned list will correspond to the 0 offset of the displayed
-table.
-
-=cut
-
-sub get_y_vals {
-	my $self = shift;
-	my $x = shift;
-
-	my $num_x = @{$self->{x}};
-	my $num_y = @{$self->{y}};
-
-	unless ($x < $num_x) {
-		carp "ERROR: there is no y value at position $x";
-		return;
-	}
-
-	my @res_vals;
-	my $vals = $self->{vals}; 
-	for (my $i = 0; $i < $num_y; $i++) {
-		my $xs = $vals->[$i];
-
-		unshift @res_vals, $xs->[$x];
-		# The bottom y value in the displayed table is at offset zero
-		# this is why unshift is used instead of push.
-	}
-
-	return @res_vals;
-}
-
-sub get_x_vals {
-	my $self = shift;
-	my $y = shift;
-
-	my $num_y = @{$self->{y}};
-
-	unless ($y < $num_y) {
-		carp "ERROR: y offset $y is out of bounds";
-		return;
-	}
-
-	return (@{$self->{vals}[$y]});
-}
-
-# }}}
-
-# {{{ flatten
-
-=head2 $tbl->flatten()
-
-  Returns TRUE on success, FALSE on error
-
-  @vals = $tbl->flatten();
-
-Flatten the table of values in to a single list.
-This is often needed because a controller expects a single list
-of values and not a two dimensional array.
-
-=cut
-
-sub flatten {
-	my $self = shift;
-
-    my @xs = $self->get_x_vals(0);
-    my @ys = $self->get_y_vals(0);
-
-    my $num_x = @xs;
-    my $num_y = @ys;
-
-    my @vals;
-
-    for (my $i = 0; $i < $num_y; $i++) {
-        unshift @vals, ($self->get_x_vals($i));
-    }
-
-	return @vals;
 }
 # }}}
 
@@ -706,8 +615,7 @@ sub set {
 		return;
 	}
 
-	$self->{vals}[($num_y - 1) - $y][$x] = $val;
-	# See get() for an explanation of the $y calculation
+	$self->{vals}[$y][$x] = $val;
 
 	return 1; # success
 }
@@ -719,7 +627,7 @@ sub set {
 
   Returns $value on success, FALSE on error
 
-Get the value at the given $x and $y coordinate offset.
+Get the value at the given horizontal ($x) and vertical ($y) offset.
 
 =cut
 
@@ -731,27 +639,143 @@ sub get {
 	my $num_x = @{$self->{x}};
 	my $num_y = @{$self->{y}};
 
-	unless ($y < $num_y) {
-		carp "ERROR: A y offset of $y is beyond the boundary ".($num_y - 1)."";
-		return;
-	}
-
 	unless ($x < $num_x) {
-		carp "ERROR: A x offset of $x is beyond the boundary ".($num_x - 1)."";
+		carp "ERROR: x offset of $x is beyond the boundary ".($num_x - 1)."";
 		return;
 	}
 
-	#
-	# The y offset starts at 0 at the bottom, not the top so it must be adjusted.
-	# (length(@ys) - 1) - y
-	#
-	# 0 -> 4
-	# 1 -> 3
-	# 2 -> 2
-	# 3 -> 1
-	# 4 -> 0
-	#
-	$self->{vals}[($num_y - 1) - $y][$x];
+	unless ($y < $num_y) {
+		carp "ERROR: y offset of $y is beyond the boundary ".($num_y - 1)."";
+		return;
+	}
+
+	$self->{vals}[$y][$x];
+}
+# }}}
+
+# {{{ lookup_points
+
+=head2 $tbl->lookup_points($val_x, $val_y, $range);
+
+  Returns @points (see below) on success, FALSE on error
+
+Lookup the points for the given values.
+
+The $range argument defines how far from the nearest point
+in the x and y direction the resulting set of points should include.
+
+Unlike offsets (see get()) which correspond to one point,
+a lookup based on values may correspond to multiple points
+of varying degrees (closer to some points than others).
+
+Suppose, for example, we are given the following map
+
+                        rpm
+ 
+              [1000]   [1500]  [2000]  [2500] [3000]
+       [100]  14.0     15.5    16.4    17.9    21.9
+  map  [90]   13.0     14.5    15.3    16.8    21.9
+       [80]   12.0     13.5    14.2    15.7    20.5
+       [70]   12.0     13.5    14.2    15.7    20.1
+       [60]   12.0     13.5    14.2    15.7    18.2
+
+A lookup of the x value of 2010 and a y value of 85
+(notice the values do not correspond exactly)
+and a range of 1 would select the points shown below (show with an X).
+
+ @points = $tbl->lookup_points(2010, 85, 1);
+
+                        rpm
+ 
+              [1000]   [1500]  [2000]  [2500] [3000]
+       [100]  14.0     15.5    16.4    17.9    21.9
+  map  [90]   13.0     X       X       X       21.9
+       [80]   12.0     X       X       X       20.5
+       [70]   12.0     X       X       X       20.1
+       [60]   12.0     13.5    14.2    15.7    18.2
+
+The set of points returned would be (in no particular order)
+
+  ([1, 1], [1, 2], [1, 3], [2, 1], [2, 2], [2, 3], ...)
+
+And this set of points could then be used to retrieve and/or assign
+the range of values. 
+
+=cut
+
+sub lookup_points {
+	my $self = shift;
+	my $x_val = shift;
+	my $y_val = shift;
+	my $range = shift;
+
+	my @x_coords = $self->get_x_coords();
+	my @y_coords = $self->get_y_coords();
+
+	my $num_x = @x_coords;
+	my $num_y = @y_coords;
+
+	# find the closest x coordinate
+	my $x;
+	if ($x_val <= $x_coords[0]) {
+		$x = 0;
+	} elsif ($x_val >= $x_coords[$num_x - 1]) {
+		$x = $num_x - 1;
+	} else {
+		for ($x = 0; $x < ($num_x - 1); $x++) {
+			if ($x_val >= $x_coords[$x] and $x_val <= $x_coords[$x + 1]) {
+				# found between, now figure out which is closer
+				if (($x_val - $x_coords[$x]) > ($x_coords[$x + 1] - $x_val)) {
+					$x = $x + 1;
+				}
+				# else current $x is closest
+				last;
+			}
+		}
+		# if it reaches the end of the loop it uses the last offset
+	}
+
+	# do the same for y
+	my $y;
+	if ($y_val <= $y_coords[0]) {
+		$y = 0;
+	} elsif ($y_val >= $y_coords[$num_y - 1]) {
+		$y = $num_y - 1;
+	} else {
+		for ($y = 0; $y < ($num_y - 1); $y++) {
+			if ($y_val >= $y_coords[$y] and $y_val <= $y_coords[$y + 1]) {
+				# found between, now figure out which is closer
+				if (($y_val - $y_coords[$y]) > ($y_coords[$y + 1] - $y_val)) {
+					$y = $y + 1;
+				}
+				# else current $y is closest
+				last;
+			}
+		}
+		# if it reaches the end of the loop it uses the last offset
+	}
+
+	my $min_x_range = $x - $range;
+	$min_x_range = 0 if ($min_x_range < 0);
+
+	my $max_x_range = $x + $range;
+	$max_x_range = ($num_x - 1) if ($max_x_range > ($num_x - 1));
+
+	my $min_y_range = $y - $range;
+	$min_y_range = 0 if ($min_y_range < 0);
+
+	my $max_y_range = $y + $range;
+	$max_y_range = ($num_y - 1) if ($max_y_range > ($num_y - 1));
+
+	# generate all points in the range
+	my @points;
+	for (my $x = $min_x_range; $x <= $max_x_range; $x++) {
+		for (my $y = $min_y_range; $y <= $max_y_range; $y++) {
+			push @points, [$x, $y];
+		}
+	}
+
+	return @points;
 }
 # }}}
 
@@ -777,17 +801,16 @@ sub diff {
 	my $tbl2 = shift;
 	my $break = shift;
 
-	my $num_x = ($tbl1->get_x_coords());
-	my $num_y = ($tbl1->get_y_coords());
+	my $num_x = @{$tbl1->{x}};
+	my $num_y = @{$tbl1->{y}};
 
 	my @diff_points;
-	for (my $i = 0; $i < $num_x; $i++) {
-		my @ys1 = $tbl1->get_y_vals($i);
-		my @ys2 = $tbl2->get_y_vals($i);
-
-		for (my $j = 0; $j < $num_y; $j++) {
-			if ($ys1[$j] != $ys2[$j]) {
-				push @diff_points, [$i, $j];
+	for (my $x = 0; $x < $num_x; $x++) {
+		for (my $y = 0; $y < $num_y; $y++) {
+			my $v1 = $tbl1->get($x, $y);
+			my $v2 = $tbl2->get($x, $y);
+			if ($v1 != $v2) {
+				push @diff_points, [$x, $y];
 
 				return 1 if ($break);
 			}

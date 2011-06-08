@@ -2,11 +2,11 @@
 use strict;
 use warnings;
 
-use Test::More tests => 52;
+use Test::More tests => 46;
 
 use_ok('Text::LookUpTable');
 
-# {{{ some basic checks
+# {{{ some basic checks; load
 my $str_start = 
 "
                      rpm
@@ -27,22 +27,9 @@ ok($str_tbl =~ /map/);
 ok($str_tbl =~ /rpm/);
 ok($str_tbl =~ /100/);
 
-ok($lut->get_x_vals(3));
-
 ok($lut->get_x_coords());
 ok($lut->get_y_coords());
 
-# Load the string version of a table and check that
-# it is equivalent.
-
-$str_tbl = "$lut";
-
-my $tbl2 = Text::LookUpTable->load($str_tbl);
-ok($tbl2);
-
-my $str_tbl2 = $lut;
-
-ok("$tbl2" eq "$lut");
 # }}}
 
 # {{{ detailed checks of an non-square table
@@ -53,43 +40,30 @@ my $str_tbl =
                      rpm
 
                [1.25]  [3.35]  [4.97]
-       [100]   1       2       3
- map   [200]   4       5       6
-       [300]   7       8       9
-       [400]   10      11      12
+       [400]   1       2       3
+ map   [300]   4       5       6
+       [200]   7       8       9
+       [100]   10      11      12
 
 ";
 
 my $lut = Text::LookUpTable->load($str_tbl);
 
-my @xs;
-my @ys;
-
-@xs = $lut->get_x_coords();
+my @xs = $lut->get_x_coords();
 ok(3 == @xs);
 
-@ys = $lut->get_y_coords();
+my @ys = $lut->get_y_coords();
 ok(4 == @ys);
 
-@xs = $lut->get_x_vals(1);
-ok(3 == @xs);
-
-ok($xs[0] == 4);
-ok($xs[1] == 5);
-ok($xs[2] == 6);
-
-@ys = $lut->get_y_vals(1);
-ok(4 == @ys);
-# offset starts at 0 at the top
-ok($ys[0] == 11);
-ok($ys[1] == 8);
-ok($ys[2] == 5);
-ok($ys[3] == 2);
+ok(10 == $lut->get(0, 0));
+ok(4 == $lut->get(0, 2));
+ok(5 == $lut->get(1, 2));
+ok(3 == $lut->get(2, 3));
 
 }
 # }}}
 
-# {{{ save a reload from a file
+# {{{ save a reload from a file DISABLED
 # Try saving a table to a file and make sure it is equivalent
 # after it is re-loaded.
 
@@ -112,95 +86,94 @@ ok($ys[3] == 2);
 # Try to load some faulty tables and make sure the error is caught.
 # Errors will be displayed but the tests here should still pass.
 
-# {{{ all values must be present, this one has one missing
-{
-my $str_bad = 
-"
-                     rpm
+## {{{ TODO all values must be present, this one has one missing
+#{
+#my $str_bad = 
+#"
+#                     rpm
+#
+#               [1.25]  [3.35]  [4.97]  [5.66]
+#       [100]   1       2       3       4     
+# map   [200]   2       2       4       5     
+#       [300]   10      -10     13      15    
+#       [400]   10      -10     13
+#
+#";
+#
+#my $blut = Text::LookUpTable->load($str_bad);
+#ok(! $blut);
+#}
+## }}}
 
-               [1.25]  [3.35]  [4.97]  [5.66]
-       [100]   1       2       3       4     
- map   [200]   2       2       4       5     
-       [300]   10      -10     13      15    
-       [400]   10      -10     13
+## {{{ TODO too many coordinates
+#{
+#my $str_bad = 
+#"
+#                     rpm
+#
+#       [222]   [1.25]  [3.35]  [4.97]  [5.66]
+#       [100]   1       2       3       4     
+# map   [200]   2       2       4       5     
+#       [300]   10      -10     13      15    
+#       [400]   10      -10     13      2
+#
+#";
+#
+#my $blut = Text::LookUpTable->load($str_bad);
+#ok(! $blut);
+#}
+## }}}
 
-";
+## {{{ TODO too many y titles
+#{
+#my $str_bad = 
+#"
+#                     rpm
+#
+#               [1.25]  [3.35]  [4.97]  [5.66]
+#       [100]   1       2       3       4     
+# map   [200]   2       2       4       5     
+# jfji  [300]   10      -10     13      15    
+#       [400]   10      -10     13      2
+#
+#";
+#
+#my $blut = Text::LookUpTable->load($str_bad);
+#ok(! $blut);
+#}
+## }}}
 
-my $blut = Text::LookUpTable->load($str_bad);
-ok(! $blut);
-}
-# }}}
-
-# {{{ too many coordinates
-{
-my $str_bad = 
-"
-                     rpm
-
-       [222]   [1.25]  [3.35]  [4.97]  [5.66]
-       [100]   1       2       3       4     
- map   [200]   2       2       4       5     
-       [300]   10      -10     13      15    
-       [400]   10      -10     13      2
-
-";
-
-my $blut = Text::LookUpTable->load($str_bad);
-ok(! $blut);
-}
-# }}}
-
-# {{{ too many y titles
-{
-my $str_bad = 
-"
-                     rpm
-
-               [1.25]  [3.35]  [4.97]  [5.66]
-       [100]   1       2       3       4     
- map   [200]   2       2       4       5     
- jfji  [300]   10      -10     13      15    
-       [400]   10      -10     13      2
-
-";
-
-my $blut = Text::LookUpTable->load($str_bad);
-ok(! $blut);
-}
-# }}}
-
-# {{{ too many x titles
-{
-my $str_bad = 
-"
-                     rpm
-                     rpm
-
-               [1.25]  [3.35]  [4.97]  [5.66]
-       [100]   1       2       3       4     
- map   [200]   2       2       4       5     
-       [300]   10      -10     13      15    
-       [400]   10      -10     13      2
-
-";
-
-my $blut = Text::LookUpTable->load($str_bad);
-ok(! $blut);
-}
-# }}}
+## {{{ TODO too many x titles
+#{
+#my $str_bad = 
+#"
+#                     rpm
+#                     rpm
+#
+#               [1.25]  [3.35]  [4.97]  [5.66]
+#       [100]   1       2       3       4     
+# map   [200]   2       2       4       5     
+#       [300]   10      -10     13      15    
+#       [400]   10      -10     13      2
+#
+#";
+#
+#my $blut = Text::LookUpTable->load($str_bad);
+#ok(! $blut);
+#}
+## }}}
 
 # {{{ set values
-
 {
 my $str_tblA = 
 "
                      rpm
 
                [1.25]  [3.35]  [4.97]
-       [100]   1       2       3
- map   [200]   4       5       6
-       [300]   7       8       9
-       [400]   10      11      12
+       [400]   1       2       3
+ map   [300]   4       5       6
+       [200]   7       8       9
+       [100]   10      11      12
 
 ";
 
@@ -209,10 +182,10 @@ my $str_tblB =
                      rpm
 
                [1.25]  [3.35]  [4.97]
-       [100]   1       2       3
- map   [200]   4       5       6
-       [300]   7       8       9
-       [400]   10      11      666
+       [400]   1       2       3
+ map   [300]   4       5       6
+       [200]   7       8       9
+       [100]   10      11      666
 
 ";
 
@@ -221,7 +194,7 @@ my $tblA = Text::LookUpTable->load($str_tblA);
 
 my $tblB = Text::LookUpTable->load($str_tblB);
 # Table B must be loaded before testing equality because
-# ther might be slight spacing differences which would
+# there might be slight spacing differences which would
 # cause the equality test to fail.
 
 ok("$tblA" ne "$tblB");
@@ -229,7 +202,6 @@ ok("$tblA" ne "$tblB");
 $tblA->set(2, 0, 666);
 
 ok("$tblA" eq "$tblB");
-
 }
 # }}}
 
@@ -241,10 +213,10 @@ my $str_tblA =
                      rpm
 
                [1.25]  [3.35]  [4.97]
-       [100]   1       2       3
- map   [200]   4       5       6
-       [300]   7       8       9
-       [400]   10      11      12
+       [400]   1       2       3
+ map   [300]   4       5       6
+       [200]   7       8       9
+       [100]   10      11      12
 
 ";
 
@@ -253,10 +225,10 @@ my $str_tblB =
                      rpm
 
                [1.25]  [3.35]  [4.97]
-       [100]   1       2       3
- map   [200]   4       5       6
-       [300]   7       8       9
-       [400]   10      11      666
+       [400]   1       2       3
+ map   [300]   4       5       6
+       [200]   7       8       9
+       [100]   10      11      666
 
 ";
 
@@ -307,11 +279,7 @@ ok($tblA);
 my $tblB = Text::LookUpTable->build(2, 4, "x", "y");
 ok($tblB);
 
-#print STDERR $tblA;
-#print STDERR $tblB;
-
 ok("$tblA" eq "$tblB");
-
 }
 # }}}
 
@@ -360,10 +328,10 @@ my $str_tblA =
                      rpm
 
                [1.25]  [3.35]  [4.97]
-       [100]   1       2       3
- map   [200]   4       5       6
-       [300]   7       8       9
-       [800]   10      11      12
+       [400]   1       2       3
+ map   [300]   4       5       6
+       [200]   7       8       9
+       [100]   10      11      12
 
 ";
 
@@ -372,10 +340,10 @@ my $str_tblB =
                      rpm
 
                [2.25]  [3.35]  [4.97]
-       [100]   1       2       3
- map   [200]   4       5       6
-       [666]   7       8       9
-       [800]   10      11      666
+       [400]   1       2       3
+ map   [300]   4       5       6
+       [222]   7       8       9
+       [100]   10      11      666
 
 ";
 
@@ -394,39 +362,53 @@ ok($diff[0] == 0);
 {
 my @diff = $tblA->diff_y_coords($tblB);
 ok(1 == @diff);
-ok($diff[0] == 2);
+ok($diff[0] == 1);
 }
 
 }
 # }}}
 
-# {{{ flatten
-
+# {{{ lookup_points
 {
+my $epsilon = 0.01;
 
-my $str_tbl = 
+my $str_start = 
 "
-                     rpm
-
-               [1.25]  [3.35]  [4.97]
-       [100]   1       2       3
- map   [200]   4       5       6
-       [300]   7       8       9
-       [800]   10      11      12
+                        rpm
+ 
+              [1000]   [1500]  [2000]  [2500] [3000]
+       [100]  14.0     15.5    16.4    17.9    21.9
+  map  [90]   13.0     14.5    15.3    16.8    21.9
+       [80]   12.0     13.5    14.2    15.7    20.5
+       [70]   12.0     13.5    14.2    15.7    20.1
+       [60]   12.0     13.5    14.2    15.7    18.2
 
 ";
 
+my $lut = Text::LookUpTable->load($str_start);
 
-my $tbl = Text::LookUpTable->load($str_tbl);
-my @vals = $tbl->flatten();
+# get(x, y)
+ok(($lut->get(0, 0) - 12.0) < $epsilon);
+ok(($lut->get(0, 3) - 13.0) < $epsilon);
+ok(($lut->get(0, 4) - 14.0) < $epsilon);
+ok(($lut->get(4, 4) - 21.9) < $epsilon);
 
-ok(12 == @vals);
+# The coordinates should be in ascending(increasing) order
+my @y_coords = $lut->get_y_coords();
+ok($y_coords[0] == 60);
+ok($y_coords[4] == 100);
 
-ok(10 == $vals[0]);
-ok(11 == $vals[1]);
-ok(12 == $vals[2]);
-ok(7 == $vals[3]);
-ok(3 == $vals[11]);
+my @x_coords = $lut->get_x_coords();
+ok($x_coords[0] == 1000);
+ok($x_coords[4] == 3000);
 
+my @points = $lut->lookup_points(2010, 85, 1);
+
+ok(9 == @points);
+
+ok(grep { ($_->[0] == 3 and $_->[1] == 3); } @points);
+ok(grep { ($_->[0] == 1 and $_->[1] == 1); } @points);
+ok(grep { ($_->[0] == 1 and $_->[1] == 2); } @points);
 }
 # }}}
+
