@@ -2,7 +2,6 @@ Generated from the Text::LookUpTable documentation:
 
   perldoc -t lib/Text/LookUpTable.pm > README
 
-
 NAME
     Text::LookUpTable - Perl5 module for text based look up table operations
 
@@ -17,6 +16,7 @@ SYNOPSIS
       $tbl->save_file();
       $tbl->save_file('my_table.tbl');
 
+      $val = $tbl->get($x, $y);
       $tbl->set($x, $y, $val);
 
       @diff_coords = $tbl->diff($tbl2);
@@ -31,12 +31,8 @@ SYNOPSIS
       $res = $tbl->set_x_coords(@x_coords);
       $res = $tbl->set_y_coords(@y_coords);
 
-      @ys = $tbl->get_y_vals($x_offset);
-      @xs = $tbl->get_x_vals($y_offset);
-
-      @vals = $tbl->flatten();
-
       $str_plot = $tbl->as_plot('R');
+      $str_plot = $tbl->as_plot('Maxima');
       print FILE $str_plot;
 
 DESCRIPTION
@@ -132,8 +128,8 @@ OPERATIONS
     Offset 0 for the X coordinates start at the LEFT of the displayed table
     and increases RIGHTWARD.
 
-    Offset 0 for the Y coordinates start at the TOP of the displayed table
-    and increases DOWNWARD.
+    Offset 0 for the Y coordinates start at the BOTTOM of the displayed
+    table and increases UPWARD.
 
       @xs = $tbl->get_x_coords();
       @ys = $tbl->get_y_coords();
@@ -143,28 +139,11 @@ OPERATIONS
 
     Assigns the x/y coordinates to the values given in the list.
 
+    The coordinates must be in ascending order so that lookup_points, etc
+    will work correctly.
+
       $res = $tbl->set_x_coords(@new_x_coords);
       $res = $tbl->set_y_coords(@new_y_coords);
-
-  $tbl->get_*_vals($offset);
-      Returns list of values on success OR FALSE on error
-
-    Retrives all values for a given offset.
-
-     @xs = get_x_vals($y_offset);
-     @ys = get_y_vals($x_offset);
-
-    The 0 offset of the returned list will correspond to the 0 offset of the
-    displayed table.
-
-  $tbl->flatten()
-      Returns TRUE on success, FALSE on error
-
-      @vals = $tbl->flatten();
-
-    Flatten the table of values in to a single list. This is often needed
-    because a controller expects a single list of values and not a two
-    dimensional array.
 
   $tbl->set($x, $y, $val);
       Returns TRUE on success OR FALSE on error
@@ -174,7 +153,52 @@ OPERATIONS
   $tbl->get($x, $y);
       Returns $value on success, FALSE on error
 
-    Get the value at the given $x and $y coordinate offset.
+    Get the value at the given horizontal ($x) and vertical ($y) offset.
+
+  $tbl->lookup_points($val_x, $val_y, $range);
+      Returns @points (see below) on success, FALSE on error
+
+    Lookup the points for the given values.
+
+    The $range argument defines how far from the nearest point in the x and
+    y direction the resulting set of points should include.
+
+    Unlike offsets (see get()) which correspond to one point, a lookup based
+    on values may correspond to multiple points of varying degrees (closer
+    to some points than others).
+
+    Suppose, for example, we are given the following map
+
+                            rpm
+ 
+                  [1000]   [1500]  [2000]  [2500] [3000]
+           [100]  14.0     15.5    16.4    17.9    21.9
+      map  [90]   13.0     14.5    15.3    16.8    21.9
+           [80]   12.0     13.5    14.2    15.7    20.5
+           [70]   12.0     13.5    14.2    15.7    20.1
+           [60]   12.0     13.5    14.2    15.7    18.2
+
+    A lookup of the x value of 2010 and a y value of 85 (notice the values
+    do not correspond exactly) and a range of 1 would select the points
+    shown below (show with an X).
+
+     @points = $tbl->lookup_points(2010, 85, 1);
+
+                            rpm
+ 
+                  [1000]   [1500]  [2000]  [2500] [3000]
+           [100]  14.0     15.5    16.4    17.9    21.9
+      map  [90]   13.0     X       X       X       21.9
+           [80]   12.0     X       X       X       20.5
+           [70]   12.0     X       X       X       20.1
+           [60]   12.0     13.5    14.2    15.7    18.2
+
+    The set of points returned would be (in no particular order)
+
+      ([1, 1], [1, 2], [1, 3], [2, 1], [2, 2], [2, 3], ...)
+
+    And this set of points could then be used to retrieve and/or assign the
+    range of values.
 
   $tb1->diff($tb2, $break);
       Returns TRUE if different, FALSE otherwise.
