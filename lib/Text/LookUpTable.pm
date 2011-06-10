@@ -377,6 +377,7 @@ sub copy {
 	}
 
     bless {
+		%$obj,
 		x_title => $obj->{x_title},
 		y_title => $obj->{y_title},
 		x => [@{$obj->{x}}],
