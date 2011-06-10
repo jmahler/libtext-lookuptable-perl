@@ -49,6 +49,8 @@ Text::LookUpTable - Perl5 module for text based look up table operations
   $str_plot = $tbl->as_plot('Maxima');
   print FILE $str_plot;
 
+  $tbl_copy = $tbl->copy();
+
 =head1 DESCRIPTION
 
 Text::LookUpTable provides operations for creating, storing, displaying,
@@ -344,6 +346,43 @@ sub build {
         y => \@ys,
         vals => \@vals,
     }, $class;
+}
+# }}}
+
+# {{{ copy
+
+=head2 Text::LookUpTable->copy($obj)
+
+  Returns: new object on success, FALSE on error
+
+Creates a new object as a copy of the given object.
+
+=cut
+
+sub copy {
+	my $obj = shift;
+
+	my $x_size = @{$obj->{x}};
+	my $y_size = @{$obj->{y}};
+
+	# copy the two dimensonal array 'vals'
+	my @new_vals;
+	for (my $y = 0; $y < $y_size; $y++) {
+		my $row = $obj->{vals}[$y];
+		my @new_row;
+		for (my $x = 0; $x < $x_size; $x++) {
+			push @new_row, $row->[$x];
+		}
+		push @new_vals, \@new_row;
+	}
+
+    bless {
+		x_title => $obj->{x_title},
+		y_title => $obj->{y_title},
+		x => [@{$obj->{x}}],
+		y => [@{$obj->{y}}],
+		vals => \@new_vals,
+	}, ref $obj;
 }
 # }}}
 

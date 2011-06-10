@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 80;
+use Test::More tests => 84;
 
 use_ok('Text::LookUpTable');
 
@@ -468,3 +468,32 @@ ok(grep { ($_->[0] == 4 and $_->[1] == 0); } @points);
 }
 # }}}
 
+# {{{ copy
+
+{
+my $str_tbl = 
+"
+               x
+
+            [0]  [1]
+       [4]   3       7
+ y     [3]   2       6
+       [2]   1       5
+       [1]   0       4
+
+";
+
+my $tbl = Text::LookUpTable->load($str_tbl);
+
+my $tbl_orig = $tbl->copy();
+
+ok("$tbl_orig" eq "$tbl");
+
+$tbl->set(1, 0, 10);
+
+ok("$tbl" ne "$tbl_orig");
+
+ok(10 == $tbl->get(1, 0));
+ok(4 == $tbl_orig->get(1, 0));
+}
+# }}}
