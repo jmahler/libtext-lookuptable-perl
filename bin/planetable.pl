@@ -33,8 +33,6 @@ my @yc = $tbl->get_y_coords();
 my $num_x = @xc;
 my $num_y = @yc;
 
-@yc = reverse @yc;
-
 for (my $x = 0; $x < $num_x; $x++) {
 	for (my $y = 0; $y < $num_y; $y++) {
 		my $val = $tbl->get($x, $y);
