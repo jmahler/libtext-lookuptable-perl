@@ -1,9 +1,14 @@
 Revision history for Perl extension Text::LookUpTable.
 
+0.08  Mon, 08 Jul 2013 22:45:47 -0700
+
+  [Jeremiah Mahler]
+  * Added Debian build dependencies for libtext-aligner-perl, etc
+
 0.07  Thu, 05 Aug 2010 21:55:38 -0700
 
   [Jeremiah Mahler]
-
+  * new version
 
 0.06  Thu, 05 Aug 2010 00:01:26 -0700
 
