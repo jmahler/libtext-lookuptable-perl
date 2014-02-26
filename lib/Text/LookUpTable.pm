@@ -1132,11 +1132,11 @@ This document refers to Text::LookUpTable version 0.07.
 
     Jeremiah Mahler <jmmahler@gmail.com>
     CPAN ID: JERI
-    http://www.google.com/profiles/jmmahler#about
+    https://plus.google.com/+JeremiahMahler/about
 
 =head1 COPYRIGHT
 
-Copyright (c) 2010, Jeremiah Mahler. All Rights Reserved.
+Copyright (c) 2014, Jeremiah Mahler. All Rights Reserved.
 This module is free software.  It may be used, redistributed
 and/or modified under the same terms as Perl itself.
 
