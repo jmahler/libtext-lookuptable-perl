@@ -127,12 +127,12 @@ sub load {
 
 	#  An example of a displayed look up table.
 	#
-    #                        rpm
-    # 
-    #              [1000]   [1500]  [2000]  [2500]
-    #       [100]  14.0     15.5    16.4    17.9
-    #  map  [90]   13.0     14.5    15.3    16.8
-    #       [80]   12.0     13.5    14.2    15.7
+	#                        rpm
+	# 
+	#              [1000]   [1500]  [2000]  [2500]
+	#       [100]  14.0     15.5    16.4    17.9
+	#  map  [90]   13.0     14.5    15.3    16.8
+	#       [80]   12.0     13.5    14.2    15.7
 	#
 	#
 	#
@@ -143,7 +143,8 @@ sub load {
 	#
 	# The x coordinates should have num_x values in square brackets []
 	#
-	# A regular row should have num_x values + 1 coordinates in square brackets.
+	# A regular row should have num_x values + 1 coordinates in
+	# square brackets.
 	#
 	# The row with the y title should have num_x values + 2
 	#
